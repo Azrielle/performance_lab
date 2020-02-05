@@ -26,9 +26,6 @@ def create_list_max_visitor_time(data_time_in, data_time_out):
         max_k = 0 
         max_time = [] 
         i = 0
-        # флаг для проверки последнего добавленного значения
-        # True - пришедший, False - ушедший
-        flag_last = False
 
         while i < len(data_time_in):
             if data_time_in[i] < data_time_out[j]:
@@ -37,31 +34,27 @@ def create_list_max_visitor_time(data_time_in, data_time_out):
                     max_k = k
                     max_time = []
                     max_time.append(data_time_in[i])
-                    flag_last= True
                 elif max_k == k:
                     max_time.append(data_time_in[i])
-                    flag_last= True
             elif data_time_in[i] == data_time_out[j]:
                 j+=1
             else:
                 k-=1
-                if (max_k > k) & flag_last:
+                if (max_k > k) & len(max_time) % 2 > 0:
                     max_time.append(data_time_out[j])
-                    flag_last= False
                 j+=1
                 continue
             i+=1
         # если последние влияние на расчеты пришедшим посетителем, то закрываем интервал по
-        # следущему ушедшиму.
-        if flag_last:
+        # следущему ушедшиму.(должно быть четное кол-во данных)
+        if len(max_time) % 2 > 0:
             max_time.append(data_time_out[j])
 
         return max_time
 
 def print_interval_time(even_list_time):
-    if len(even_list_time) % 2 == 0:
-        for i in range(0,len(even_list_time),2):
-            print(f'%s %s' % (even_list_time[i].isoformat('minutes'),even_list_time[i].isoformat('minutes')))
+    for i in range(0,len(even_list_time),2):
+        print(f'%s %s' % (even_list_time[i].isoformat('minutes'),even_list_time[i+1].isoformat('minutes')))
         
 def main(*args):
     data = open_file_create_list(args[0])
